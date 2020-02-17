@@ -1,4 +1,10 @@
 export const enum State {
-  NotPlaying,
-  Playing
+  WaitingGameStart,
+  AcceptingQAndA
 }
+
+export type NoteResult = {
+  nextState: State;
+  isFailed: boolean;
+  message: string;
+};

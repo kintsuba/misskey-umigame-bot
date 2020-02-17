@@ -2,6 +2,7 @@ import MisskeyUtils from "./utils/misskey-utils";
 import * as WebSocket from "websocket";
 import * as dotenv from "dotenv";
 import onMessage from "./onmessage";
+import Umigame from "./umigame/umigame";
 
 dotenv.config();
 
@@ -25,6 +26,7 @@ client.on("connect", connection => {
   console.info("WebSocket Client Connected");
 
   const misskeyUtils = new MisskeyUtils(token, connection);
+  const umigame = new Umigame(misskeyUtils);
 
   const mainChannelId = "main";
   const globalTLChannelId = "global";
@@ -45,7 +47,7 @@ client.on("connect", connection => {
   });
 
   connection.on("message", message => {
-    onMessage(message, misskeyUtils, mainChannelId, globalTLChannelId);
+    onMessage(message, misskeyUtils, umigame, mainChannelId, globalTLChannelId);
   });
 });
 
