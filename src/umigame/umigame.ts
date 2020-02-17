@@ -29,7 +29,7 @@ export default class Umigame {
       }
     } else if (this.state === State.Playing) {
       const result = playing(note, this.memberIds);
-      if (result.memberId) this.memberIds.push(result.memberId);
+      if (result.newMemberId) this.memberIds.push(result.newMemberId);
       if (!result.isError) {
         this.state = result.nextState;
       } else {

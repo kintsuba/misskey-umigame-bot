@@ -13,7 +13,7 @@ export type WaitingResult = {
 
 export type PlayingResult = {
   nextState: State;
-  memberId?: string;
+  newMemberId?: string;
   isError: boolean;
   message: string;
 };
