@@ -7,21 +7,44 @@ import MisskeyUtils from "../utils/misskey-utils";
 export default class Umigame {
   state: State;
   misskeyUtils: MisskeyUtils;
+  masterId: string;
+  memberIds: string[];
 
   constructor(misskeyUtils: MisskeyUtils) {
     this.state = State.Waiting;
     this.misskeyUtils = misskeyUtils;
+    this.masterId = "";
+    this.memberIds = [];
     console.log("Initialization Complete !");
   }
 
   update(note: Note): void {
-    const result = this.state === State.Waiting ? waiting(note) : playing(note);
-    if (!result.isError) {
-      this.state = result.nextState;
-    } else {
-      this.exitGameAbnormally(result.message);
+    if (this.state === State.Waiting) {
+      const result = waiting(note);
+      this.masterId = result.masterId ?? "";
+      if (!result.isError) {
+        this.state = result.nextState;
+      } else {
+        this.exitGameAbnormally(result.message);
+      }
+    } else if (this.state === State.Playing) {
+      const result = playing(note, this.memberIds);
+      if (result.memberId) this.memberIds.push(result.memberId);
+      if (!result.isError) {
+        this.state = result.nextState;
+      } else {
+        this.exitGameAbnormally(result.message);
+      }
+
+      if (this.state === State.End) {
+        this.exitGameNormally(result.message);
+      }
     }
-    this.state;
+  }
+
+  exitGameNormally(message: string): void {
+    this.state = State.Waiting;
+    console.log(message);
   }
 
   exitGameAbnormally(message: string): void {

@@ -1,7 +1,7 @@
 import { Note } from "../utils/types";
-import { State, NoteResult } from "./types";
+import { State, PlayingResult } from "./types";
 
-const playing = (note: Note): NoteResult => {
+const playing = (note: Note, memberIds: string[]): PlayingResult => {
   const text = note.text ?? "";
 
   if (/end .+/.test(text)) {

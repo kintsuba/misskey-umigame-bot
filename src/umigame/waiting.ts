@@ -1,7 +1,7 @@
 import { Note } from "../utils/types";
-import { State, NoteResult } from "./types";
+import { State, WaitingResult } from "./types";
 
-const waiting = (note: Note): NoteResult => {
+const waiting = (note: Note): WaitingResult => {
   const text = note.text ?? "";
 
   if (/start .+/.test(text)) {

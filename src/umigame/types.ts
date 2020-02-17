@@ -1,10 +1,19 @@
 export const enum State {
   Waiting,
-  Playing
+  Playing,
+  End
 }
 
-export type NoteResult = {
+export type WaitingResult = {
   nextState: State;
+  masterId?: string;
+  isError: boolean;
+  message: string;
+};
+
+export type PlayingResult = {
+  nextState: State;
+  memberId?: string;
   isError: boolean;
   message: string;
 };
