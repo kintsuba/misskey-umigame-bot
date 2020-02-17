@@ -7,13 +7,20 @@ export const enum State {
 export type WaitingResult = {
   nextState: State;
   masterId?: string;
+  question?: string;
   isError: boolean;
-  message: string;
+  noteMasterMessage?: string;
+  noteMasterMessageCW?: string;
+  noteMemberMessage?: string;
+  noteMemberMessageCW?: string;
 };
 
 export type PlayingResult = {
   nextState: State;
   newMemberId?: string;
   isError: boolean;
-  message: string;
+  noteMasterMessage?: string;
+  noteMasterMessageCW?: string;
+  noteMemberMessage?: string;
+  noteMemberMessageCW?: string;
 };

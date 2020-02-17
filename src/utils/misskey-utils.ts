@@ -82,22 +82,37 @@ export default class MisskeyUtils {
       "include"
     );
   };
-  noteHome = (text: string): Promise<Note> => {
+  noteHome = (text: string, cw?: string): Promise<Note> => {
     return this.note({
       text: text,
-      visibility: MisskeyUtils.Visibility.Home
+      visibility: MisskeyUtils.Visibility.Home,
+      cw: cw
     });
   };
-  noteFollowers = (text: string): Promise<Note> => {
+  noteFollowers = (text: string, cw?: string): Promise<Note> => {
     return this.note({
       text: text,
-      visibility: MisskeyUtils.Visibility.Followers
+      visibility: MisskeyUtils.Visibility.Followers,
+      cw: cw
     });
   };
-  notePublic = (text: string): Promise<Note> => {
+  notePublic = (text: string, cw?: string): Promise<Note> => {
     return this.note({
       text: text,
-      visibility: MisskeyUtils.Visibility.Public
+      visibility: MisskeyUtils.Visibility.Public,
+      cw: cw
+    });
+  };
+  noteSpecified = (
+    text: string,
+    visibleUserIds: string[],
+    cw?: string
+  ): Promise<Note> => {
+    return this.note({
+      text: text,
+      visibility: MisskeyUtils.Visibility.Specified,
+      visibleUserIds: visibleUserIds,
+      cw: cw
     });
   };
   replyHome = (text: string, replyId: string): Promise<Note> => {
