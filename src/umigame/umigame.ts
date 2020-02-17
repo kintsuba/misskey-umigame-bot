@@ -1,7 +1,7 @@
 import { Note } from "../utils/types";
 import { State } from "./types";
-import waitingGameStart from "./waitingGameStart";
-import acceptingQAndA from "./acceptingQAndA";
+import waiting from "./waiting";
+import playing from "./playing";
 import MisskeyUtils from "../utils/misskey-utils";
 
 export default class Umigame {
@@ -9,37 +9,14 @@ export default class Umigame {
   misskeyUtils: MisskeyUtils;
 
   constructor(misskeyUtils: MisskeyUtils) {
-    this.state = State.WaitingGameStart;
+    this.state = State.Waiting;
     this.misskeyUtils = misskeyUtils;
     console.log("Initialization Complete !");
   }
 
   update(note: Note): void {
-    switch (this.state) {
-      case State.WaitingGameStart: {
-        const result = waitingGameStart(note);
-        if (!result.isFailed) {
-          this.state = result.nextState;
-        } else {
-          this.exitGameAbnormally(result.message);
-        }
-        break;
-      }
-      case State.AcceptingQAndA: {
-        const result = acceptingQAndA(note);
-        if (!result.isFailed) {
-          this.state = result.nextState;
-        } else {
-          this.exitGameAbnormally(result.message);
-        }
-        break;
-      }
-      default: {
-        console.log();
-      }
-    }
-    const result = acceptingQAndA(note);
-    if (!result.isFailed) {
+    const result = this.state === State.Waiting ? waiting(note) : playing(note);
+    if (!result.isError) {
       this.state = result.nextState;
     } else {
       this.exitGameAbnormally(result.message);
@@ -48,7 +25,7 @@ export default class Umigame {
   }
 
   exitGameAbnormally(message: string): void {
-    this.state = State.WaitingGameStart;
+    this.state = State.Waiting;
     console.log(message);
   }
 }
