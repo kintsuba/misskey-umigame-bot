@@ -13,6 +13,5 @@ export type WaitingResult = {
 
 export type PlayingResult = {
   nextState: State;
-  newMemberId?: string;
   isError: boolean;
 };

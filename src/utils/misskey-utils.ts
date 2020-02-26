@@ -106,13 +106,15 @@ export default class MisskeyUtils {
   noteSpecified = (
     text: string,
     visibleUserIds: string[],
-    cw?: string
+    cw?: string,
+    poll?: Poll
   ): Promise<Note> => {
     return this.note({
       text: text,
       visibility: MisskeyUtils.Visibility.Specified,
       visibleUserIds: visibleUserIds,
-      cw: cw
+      cw: cw,
+      poll: poll
     });
   };
   replyHome = (text: string, replyId: string): Promise<Note> => {
