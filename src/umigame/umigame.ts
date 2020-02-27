@@ -8,13 +8,13 @@ export default class Umigame {
   state: State;
   misskeyUtils: MisskeyUtils;
   masterId: string;
-  question: string;
+  problem: string;
 
   constructor(misskeyUtils: MisskeyUtils) {
     this.state = State.Waiting;
     this.misskeyUtils = misskeyUtils;
     this.masterId = "";
-    this.question = "";
+    this.problem = "";
 
     console.log("Initialization Complete !");
   }
@@ -25,7 +25,7 @@ export default class Umigame {
       if (!result.isError) {
         this.masterId = result.masterId ?? "";
         this.state = result.nextState;
-        this.question = result.question ?? "";
+        this.problem = result.problem ?? "";
       } else {
         this.exitGameAbnormally;
       }
@@ -35,7 +35,7 @@ export default class Umigame {
       const result = playing(
         note,
         this.masterId,
-        this.question,
+        this.problem,
         this.misskeyUtils
       );
       if (!result.isError) {
@@ -52,7 +52,7 @@ export default class Umigame {
   reset(): void {
     this.state = State.Waiting;
     this.masterId = "";
-    this.question = "";
+    this.problem = "";
   }
 
   exitGameNormally(): void {

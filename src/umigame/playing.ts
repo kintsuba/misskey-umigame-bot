@@ -1,14 +1,15 @@
 import { Note } from "../utils/types";
-import { State, PlayingResult } from "./types";
+import { State, PlayingResult, Question } from "./types";
 import MisskeyUtils from "../utils/misskey-utils";
 
-const playing = (
+const playing = async (
   note: Note,
   masterId: string,
-  question: string,
+  problem: string,
   misskeyUtils: MisskeyUtils
-): PlayingResult => {
+): Promise<PlayingResult> => {
   const memberIds: string[] = [];
+  const questions: Question[] = [];
 
   const text = note.text ?? "";
   if (masterId === note.userId) {
@@ -17,7 +18,7 @@ const playing = (
       misskeyUtils.noteHome(
         `Q&A\n`,
         `[問題]\n` +
-          `<center>**${question}**</center>\n` +
+          `<center>**${problem}**</center>\n` +
           `[解答]\n` +
           `<center>**${match[1]}**</center>\n\n` +
           "ウミガメのスープを終了しました。また遊んでくださいね"
@@ -37,27 +38,33 @@ const playing = (
       };
     }
   } else {
-    if (memberIds.includes(note.userId)) {
-      misskeyUtils.noteSpecified(
-        "[質問]\n" + note.text,
-        [masterId],
-        undefined,
-        {
-          choices: [
-            "はい",
-            "いいえ",
-            "はい(重要)",
-            "いいえ(重要)",
-            "問題と関係しない質問",
-            "既出の質問",
-            "回答不能"
-          ]
-        }
-      );
-    } else {
+    if (!memberIds.includes(note.userId)) {
       memberIds.push(note.userId);
-      misskeyUtils.noteSpecified("[質問]\n" + note.text, [masterId]);
     }
+    const umigameNote = await misskeyUtils.noteSpecified(
+      "[質問]\n" + note.text,
+      [masterId],
+      undefined,
+      {
+        choices: [
+          "はい",
+          "いいえ",
+          "はい(重要)",
+          "いいえ(重要)",
+          "問題と関係しない質問",
+          "既出の質問",
+          "回答不能"
+        ]
+      }
+    );
+
+    questions.push({
+      text: note.text ?? "",
+      questionNoteId: note.id,
+      umigameNoteId: umigameNote.id,
+      userId: note.userId
+    });
+
     return {
       nextState: State.Playing,
       isError: false

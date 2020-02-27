@@ -7,11 +7,19 @@ export const enum State {
 export type WaitingResult = {
   nextState: State;
   masterId?: string;
-  question?: string;
+  problem?: string;
   isError: boolean;
 };
 
 export type PlayingResult = {
   nextState: State;
   isError: boolean;
+};
+
+export type Question = {
+  text: string;
+  questionNoteId: string;
+  umigameNoteId: string;
+  userId: string;
+  answer?: string;
 };
