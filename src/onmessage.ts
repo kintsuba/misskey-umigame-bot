@@ -26,11 +26,14 @@ const onMessage = (
 
   if (data.body.id === mainChannelId && data.body.type === "followed") {
     misskeyUtils.follow(data.body.body.id); // フォロー返し
-  } else if (data.body.id === mainChannelId && data.body.type === "mention") {
+  } else if (
+    data.body.id === mainChannelId &&
+    (data.body.type === "mention" || data.body.type === "noteUpdated")
+  ) {
     const text = data.body.body.text;
     if (!text) return;
 
-    umigame.update(data.body.body);
+    umigame.update(data.body.body, data.body.type);
   }
 };
 

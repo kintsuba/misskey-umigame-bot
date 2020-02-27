@@ -19,7 +19,7 @@ export default class Umigame {
     console.log("Initialization Complete !");
   }
 
-  async update(note: Note): Promise<void> {
+  async update(note: Note, type: string): Promise<void> {
     if (this.state === State.Waiting) {
       const result = await waiting(note, this.misskeyUtils);
       if (!result.isError) {
@@ -34,6 +34,7 @@ export default class Umigame {
 
       const result = await playing(
         note,
+        type,
         this.masterId,
         this.problem,
         this.misskeyUtils
