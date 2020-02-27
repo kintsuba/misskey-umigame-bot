@@ -58,6 +58,8 @@ const playing = async (
       }
     );
 
+    misskeyUtils.capture(umigameNote.id);
+
     questions.push({
       text: note.text ?? "",
       questionNoteId: note.id,

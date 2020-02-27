@@ -32,7 +32,7 @@ export default class Umigame {
     } else if (this.state === State.Playing) {
       console.log("Now Playing!");
 
-      const result = playing(
+      const result = await playing(
         note,
         this.masterId,
         this.problem,
