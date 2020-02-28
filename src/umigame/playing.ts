@@ -1,10 +1,9 @@
-import { Note } from "../utils/types";
+import { Note, Vote, isNote, isVote } from "../utils/types";
 import { State, PlayingResult, Question } from "./types";
 import MisskeyUtils from "../utils/misskey-utils";
 
 const playing = async (
-  note: Note,
-  type: string,
+  body: Note | Vote,
   masterId: string,
   problem: string,
   misskeyUtils: MisskeyUtils
@@ -12,8 +11,9 @@ const playing = async (
   const memberIds: string[] = [];
   const questions: Question[] = [];
 
-  const text = note.text ?? "";
-  if (type === "mention") {
+  if (isNote(body)) {
+    const note = body;
+    const text = note.text ?? "";
     if (masterId === note.userId) {
       const match = text.match(/^end (.+)/);
       if (match) {
@@ -74,8 +74,10 @@ const playing = async (
         isError: false
       };
     }
-  } else if (type === "noteUpdated") {
-    console.debug("回答きたよ");
+  } else if (isVote(body)) {
+    const vote = body;
+
+    console.debug(vote.userId + " " + vote.choice);
     return {
       nextState: State.Playing,
       isError: true

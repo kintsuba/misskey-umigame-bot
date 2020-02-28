@@ -35,6 +35,15 @@ export interface Note {
   visibility?: string;
 }
 
+export interface Vote {
+  choice: number;
+  userId: string;
+}
+
+export interface Follow {
+  id: string;
+}
+
 export interface Message {
   userId: string;
   limit?: number;
@@ -57,3 +66,33 @@ export enum Visibility {
   Specified = "specified",
   Private = "private"
 }
+
+export interface MisskeyMessage {
+  type: string;
+  body: MisskeyMessageBody;
+}
+
+export interface MisskeyMessageBody {
+  id: string;
+  type: string;
+  body: Note | Vote | Follow;
+}
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isNote = (arg: any): arg is Note => {
+  return (
+    arg != null &&
+    "string" === typeof arg.id &&
+    "string" === typeof arg.userId &&
+    "string" === typeof arg.createdAt
+  );
+};
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const isVote = (arg: any): arg is Vote => {
+  return (
+    arg != null &&
+    "number" === typeof arg.choice &&
+    "string" === typeof arg.userId
+  );
+};

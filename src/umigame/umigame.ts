@@ -1,4 +1,4 @@
-import { Note } from "../utils/types";
+import { Note, Vote, isNote } from "../utils/types";
 import { State } from "./types";
 import waiting from "./waiting";
 import playing from "./playing";
@@ -19,9 +19,11 @@ export default class Umigame {
     console.log("Initialization Complete !");
   }
 
-  async update(note: Note, type: string): Promise<void> {
+  async update(body: Note | Vote): Promise<void> {
     if (this.state === State.Waiting) {
-      const result = await waiting(note, this.misskeyUtils);
+      if (!isNote(body)) return;
+
+      const result = await waiting(body, this.misskeyUtils);
       if (!result.isError) {
         this.masterId = result.masterId ?? "";
         this.state = result.nextState;
@@ -33,12 +35,12 @@ export default class Umigame {
       console.log("Now Playing!");
 
       const result = await playing(
-        note,
-        type,
+        body,
         this.masterId,
         this.problem,
         this.misskeyUtils
       );
+
       if (!result.isError) {
         this.state = result.nextState;
         if (this.state === State.End) {

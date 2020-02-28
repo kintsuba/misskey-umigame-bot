@@ -1,18 +1,7 @@
 import MisskeyUtils from "./utils/misskey-utils";
-import { Note } from "./utils/types";
+import { Note, MisskeyMessage, Follow, Vote } from "./utils/types";
 import * as WebSocket from "websocket";
 import Umigame from "./umigame/umigame";
-
-interface MisskeyMessage {
-  type: string;
-  body: MisskeyMessageBody;
-}
-
-interface MisskeyMessageBody {
-  id: string;
-  type: string;
-  body: Note;
-}
 
 const onMessage = (
   message: WebSocket.IMessage,
@@ -25,15 +14,20 @@ const onMessage = (
   const data = JSON.parse(message.utf8Data) as MisskeyMessage;
 
   if (data.body.id === mainChannelId && data.body.type === "followed") {
-    misskeyUtils.follow(data.body.body.id); // フォロー返し
-  } else if (
-    data.body.id === mainChannelId &&
-    (data.body.type === "mention" || data.body.type === "noteUpdated")
-  ) {
-    const text = data.body.body.text;
-    if (!text) return;
+    const follow = data.body.body as Follow;
+    misskeyUtils.follow(follow.id); // フォロー返し
+  } else if (data.body.id === mainChannelId) {
+    if (data.body.type === "mention") {
+      const note = data.body.body as Note;
+      if (!note.text) return;
 
-    umigame.update(data.body.body, data.body.type);
+      umigame.update(note);
+    } else if (data.body.type === "pollVoted") {
+      const vote = data.body.body as Vote;
+      if (!vote) return;
+
+      umigame.update(vote);
+    }
   }
 };
 

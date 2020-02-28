@@ -25,7 +25,7 @@ const waiting = async (
     return {
       nextState: State.Playing,
       isError: false,
-      question: match[1],
+      problem: match[1],
       masterId: note.userId
     };
   } else {
