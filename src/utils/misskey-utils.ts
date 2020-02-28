@@ -37,7 +37,7 @@ export default class MisskeyUtils {
     }
   };
 
-  note = ({
+  note = async ({
     text,
     visibility,
     replyId = "",
@@ -76,11 +76,13 @@ export default class MisskeyUtils {
 
     const noteJson = JSON.stringify(noteObj);
 
-    return this.fetchJson(
-      "https://misskey.m544.net/api/notes/create",
-      noteJson,
-      "include"
-    );
+    return (
+      await this.fetchJson(
+        "https://misskey.m544.net/api/notes/create",
+        noteJson,
+        "include"
+      )
+    ).createdNote as Note;
   };
   noteHome = (text: string, cw?: string): Promise<Note> => {
     return this.note({

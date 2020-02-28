@@ -47,7 +47,7 @@ client.on("connect", connection => {
   });
 
   connection.on("message", message => {
-    onMessage(message, misskeyUtils, umigame, mainChannelId, globalTLChannelId);
+    onMessage(message, misskeyUtils, umigame, mainChannelId);
   });
 });
 

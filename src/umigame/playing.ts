@@ -1,9 +1,9 @@
-import { Note, Vote, isNote, isVote } from "../utils/types";
-import { State, PlayingResult, Question } from "./types";
+import { isNote, isVote, MisskeyMessageBody } from "../utils/types";
+import { State, PlayingResult, Question, voteChoice } from "./types";
 import MisskeyUtils from "../utils/misskey-utils";
 
 const playing = async (
-  body: Note | Vote,
+  body: MisskeyMessageBody,
   masterId: string,
   problem: string,
   misskeyUtils: MisskeyUtils
@@ -11,8 +11,10 @@ const playing = async (
   const memberIds: string[] = [];
   const questions: Question[] = [];
 
-  if (isNote(body)) {
-    const note = body;
+  console.log("Start Playing.");
+
+  if (isNote(body.body)) {
+    const note = body.body;
     const text = note.text ?? "";
     if (masterId === note.userId) {
       const match = text.match(/^end (.+)/);
@@ -48,15 +50,7 @@ const playing = async (
         [masterId],
         undefined,
         {
-          choices: [
-            "はい",
-            "いいえ",
-            "はい(重要)",
-            "いいえ(重要)",
-            "問題と関係しない質問",
-            "既出の質問",
-            "回答不能"
-          ]
+          choices: voteChoice
         }
       );
 
@@ -74,13 +68,23 @@ const playing = async (
         isError: false
       };
     }
-  } else if (isVote(body)) {
-    const vote = body;
+  } else if (isVote(body.body)) {
+    const vote = body.body;
 
-    console.debug(vote.userId + " " + vote.choice);
+    console.debug(`${vote.userId}: ${vote.choice}`);
+
+    const question = questions.find(q => q.umigameNoteId === body.id);
+    if (question) question.answer = voteChoice[vote.choice];
+    misskeyUtils.noteSpecified(
+      `[質問]\n` +
+        `${question?.text}\n` +
+        `[回答]\n` +
+        `${voteChoice[vote.choice]}`,
+      memberIds
+    );
     return {
       nextState: State.Playing,
-      isError: true
+      isError: false
     };
   }
   return {
