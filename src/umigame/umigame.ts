@@ -32,8 +32,6 @@ export default class Umigame {
         this.exitGameAbnormally;
       }
     } else if (this.state === State.Playing) {
-      console.log("Now Playing!");
-
       const result = await playing(
         body,
         this.masterId,

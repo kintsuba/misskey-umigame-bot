@@ -29,10 +29,8 @@ client.on("connect", connection => {
   const umigame = new Umigame(misskeyUtils);
 
   const mainChannelId = "main";
-  const globalTLChannelId = "global";
 
   connection.sendUTF(MisskeyUtils.getMainJson(mainChannelId));
-  connection.sendUTF(MisskeyUtils.getGlobalTLJson(globalTLChannelId));
 
   connection.on("error", error => {
     console.error("Connection Error: " + error.toString());

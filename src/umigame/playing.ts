@@ -2,21 +2,22 @@ import { isNote, isVote, MisskeyMessageBody } from "../utils/types";
 import { State, PlayingResult, Question, voteChoice } from "./types";
 import MisskeyUtils from "../utils/misskey-utils";
 
+const memberIds: string[] = [];
+const questions: Question[] = [];
+
 const playing = async (
   body: MisskeyMessageBody,
   masterId: string,
   problem: string,
   misskeyUtils: MisskeyUtils
 ): Promise<PlayingResult> => {
-  const memberIds: string[] = [];
-  const questions: Question[] = [];
-
   console.log("Start Playing.");
 
   if (isNote(body.body)) {
     const note = body.body;
     const text = note.text ?? "";
     if (masterId === note.userId) {
+      // 出題者からの返信
       const match = text.match(/^end (.+)/);
       if (match) {
         misskeyUtils.noteHome(
@@ -42,8 +43,11 @@ const playing = async (
         };
       }
     } else {
+      // 出題者以外からの返信
       if (!memberIds.includes(note.userId)) {
+        console.debug(note.userId);
         memberIds.push(note.userId);
+        console.debug(memberIds);
       }
       const umigameNote = await misskeyUtils.noteSpecified(
         "[質問]\n" + note.text,
