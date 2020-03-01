@@ -13,7 +13,7 @@ const getQandA = () => {
     return result;
 };
 const playing = async (body, masterId, problem, misskeyUtils) => {
-    var _a, _b, _c;
+    var _a, _b, _c, _d;
     console.log("Start Playing.");
     if (types_1.isNote(body.body)) {
         const note = body.body;
@@ -61,12 +61,13 @@ const playing = async (body, masterId, problem, misskeyUtils) => {
                 memberIds.push(note.userId);
                 console.debug(memberIds);
             }
-            const umigameNote = await misskeyUtils.noteSpecified("[質問]\n" + `<center>**${note.text}**</center>`, [masterId], undefined, {
+            const text = (_b = note.text) === null || _b === void 0 ? void 0 : _b.replace(/@umigame/g, "");
+            const umigameNote = await misskeyUtils.noteSpecified("[質問]\n" + `<center>**${text}**</center>`, [masterId], undefined, {
                 choices: types_2.voteChoice
             });
             misskeyUtils.capture(umigameNote.id);
             questions.push({
-                text: (_b = note.text, (_b !== null && _b !== void 0 ? _b : "")),
+                text: (_c = note.text, (_c !== null && _c !== void 0 ? _c : "")),
                 questionNoteId: note.id,
                 umigameNoteId: umigameNote.id,
                 userId: note.userId
@@ -84,7 +85,7 @@ const playing = async (body, masterId, problem, misskeyUtils) => {
         if (question)
             question.answer = types_2.voteChoice[vote.choice];
         misskeyUtils.noteSpecified("[これまでの質問一覧]\n" + getQandA(), memberIds, `[質問]\n` +
-            `<center>**${(_c = question) === null || _c === void 0 ? void 0 : _c.text}**</center>\n` +
+            `<center>**${(_d = question) === null || _d === void 0 ? void 0 : _d.text}**</center>\n` +
             `[回答]\n` +
             `<center>**${types_2.voteChoice[vote.choice]}**</center>`);
         return {
