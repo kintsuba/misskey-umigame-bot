@@ -27,13 +27,17 @@ export default class MisskeyUtils {
       body: json
     };
 
-    const response = await fetch(url, postData);
-    if (response.ok) {
-      console.log(`${response.status} OK`);
-      return await response.json();
-    } else {
-      console.log(`${response.status} Error`);
-      return await response.json();
+    try {
+      const response = await fetch(url, postData);
+      if (response.ok) {
+        console.log(`${response.status} OK`);
+        return await response.json();
+      } else {
+        console.log(`${response.status} Error`);
+        return await response.json();
+      }
+    } catch (err) {
+      console.error(err);
     }
   };
 

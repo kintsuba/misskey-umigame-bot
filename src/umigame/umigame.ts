@@ -1,4 +1,4 @@
-import { Note, Vote, isNote, MisskeyMessageBody } from "../utils/types";
+import { isNote, MisskeyMessageBody } from "../utils/types";
 import { State } from "./types";
 import waiting from "./waiting";
 import playing from "./playing";

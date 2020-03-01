@@ -5,6 +5,14 @@ import MisskeyUtils from "../utils/misskey-utils";
 const memberIds: string[] = [];
 const questions: Question[] = [];
 
+const getQandA = (): string => {
+  let result = "";
+  questions.forEach(q => {
+    result = `${result}Q. ${q.text}\nA. ${q.answer ?? ""}\n\n`;
+  });
+  return result;
+};
+
 const playing = async (
   body: MisskeyMessageBody,
   masterId: string,
@@ -18,25 +26,43 @@ const playing = async (
     const text = note.text ?? "";
     if (masterId === note.userId) {
       // 出題者からの返信
-      const match = text.match(/^end (.+)/);
+      const match = text.match(/^end (.+)/s);
       if (match) {
-        misskeyUtils.noteHome(
-          `Q&A\n`,
-          `[問題]\n` +
-            `<center>**${problem}**</center>\n` +
-            `[解答]\n` +
-            `<center>**${match[1]}**</center>\n\n` +
-            "ウミガメのスープを終了しました。また遊んでくださいね"
-        );
+        if (process.env.NODE_ENV === "production") {
+          misskeyUtils.notePublic(
+            "[質問一覧]\n" + getQandA(),
+            `[問題]\n` +
+              `<center>**${problem}**</center>\n` +
+              `[解答]\n` +
+              `<center>**${match[1]}**</center>\n\n` +
+              "ウミガメのスープを終了しました。また遊んでくださいね"
+          );
+        } else {
+          misskeyUtils.noteHome(
+            "[質問一覧]\n" + getQandA(),
+            `[問題]\n` +
+              `<center>**${problem}**</center>\n` +
+              `[解答]\n` +
+              `<center>**${match[1]}**</center>\n\n` +
+              "ウミガメのスープを終了しました。また遊んでくださいね"
+          );
+        }
         return {
           nextState: State.End,
           isError: false
         };
       } else if (/^end$/.test(text)) {
-        misskeyUtils.noteHome(
-          "ウミガメのスープを終了しました。また遊んでくださいね",
-          note.id
-        );
+        if (process.env.NODE_ENV === "production") {
+          misskeyUtils.notePublic(
+            "ウミガメのスープを終了しました。また遊んでくださいね",
+            note.id
+          );
+        } else {
+          misskeyUtils.noteHome(
+            "ウミガメのスープを終了しました。また遊んでくださいね",
+            note.id
+          );
+        }
         return {
           nextState: State.End,
           isError: false
@@ -50,7 +76,7 @@ const playing = async (
         console.debug(memberIds);
       }
       const umigameNote = await misskeyUtils.noteSpecified(
-        "[質問]\n" + note.text,
+        "[質問]\n" + `<center>**${note.text}**</center>`,
         [masterId],
         undefined,
         {
@@ -80,11 +106,12 @@ const playing = async (
     const question = questions.find(q => q.umigameNoteId === body.id);
     if (question) question.answer = voteChoice[vote.choice];
     misskeyUtils.noteSpecified(
+      "[これまでの質問一覧]\n" + getQandA(),
+      memberIds,
       `[質問]\n` +
-        `${question?.text}\n` +
+        `<center>**${question?.text}**</center>\n` +
         `[回答]\n` +
-        `${voteChoice[vote.choice]}`,
-      memberIds
+        `<center>**${voteChoice[vote.choice]}**</center>`
     );
     return {
       nextState: State.Playing,
