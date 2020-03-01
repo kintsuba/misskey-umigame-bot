@@ -75,8 +75,9 @@ const playing = async (
         memberIds.push(note.userId);
         console.debug(memberIds);
       }
+      const text = note.text?.replace(/@umigame/g, "");
       const umigameNote = await misskeyUtils.noteSpecified(
-        "[質問]\n" + `<center>**${note.text}**</center>`,
+        "[質問]\n" + `<center>**${text}**</center>`,
         [masterId],
         undefined,
         {
