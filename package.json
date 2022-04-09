@@ -19,7 +19,7 @@
   "dependencies": {
     "@types/node-schedule": "^1.2.4",
     "dotenv": "^8.1.0",
-    "moment": "^2.24.0",
+    "moment": "^2.29.2",
     "node-fetch": "^2.6.0",
     "websocket": "^1.0.30"
   }
